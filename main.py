@@ -17,6 +17,7 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    boom_group = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
@@ -71,9 +72,16 @@ def main():
                  shot.position.y < 0 or 
                  shot.position.y > SCREEN_HEIGHT):
                 shot.kill()
-            if  pygame.sprite.spritecollide(shot, asteroids, True):
-                shot.kill()
 
+            hit_asteroids = pygame.sprite.spritecollide(shot, asteroids, False)
+
+            if  hit_asteroids:
+                shot.kill()
+                for asteroid in hit_asteroids:
+                    asteroid.split(asteroids, boom_group)
+         
+        boom_group.update()
+        boom_group.draw(screen)
         pygame.display.flip()
 
     pygame.quit()
