@@ -3,6 +3,7 @@ import pygame.font
 import sys
 from constants import *
 from player import Player
+from shot import Shot
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 
@@ -15,7 +16,9 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
+    Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -38,6 +41,8 @@ def main():
         for sprite in drawable:
             sprite.draw(screen)
 
+
+
         for asteroid in asteroids:
             if player.collisions(asteroid):
                 game_over_font = pygame.font.Font(None, 74)
@@ -59,6 +64,15 @@ def main():
                         if event.type == pygame.QUIT:
                             waiting = False
                             sys.exit()
+        
+        for shot in shots:
+            if  (shot.position.x < 0 or 
+                 shot.position.x > SCREEN_WIDTH or 
+                 shot.position.y < 0 or 
+                 shot.position.y > SCREEN_HEIGHT):
+                shot.kill()
+            if  pygame.sprite.spritecollide(shot, asteroids, True):
+                shot.kill()
 
         pygame.display.flip()
 
